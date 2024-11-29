@@ -6,6 +6,7 @@ const Conversation = require('./../model/conversationSchema');
 const Message  = require('./../model/messageSchema')
 const User = require('./../model/userSchema');
 const  mongoose = require('mongoose');
+const asyncHandler = require('express-async-handler')
 const app = express();
 
 const server = http.createServer(app)
@@ -23,6 +24,12 @@ io.on('connection',async(socket)=>{
     const token = socket.handshake.auth.token
     // (... sender ...) [Loged in user]
     const userDetail = await getUserDetailFromToken(token)
+
+    if(!userDetail)
+    {
+        return null;
+    }
+
     socket.join(userDetail?._id.toString())
     onlineStatus.add(userDetail?.id)
     
@@ -30,7 +37,7 @@ io.on('connection',async(socket)=>{
         // console.log(userDetail)
         const currentUserConversation = await Conversation.find({
             "$or": [
-                { sender: userDetail._id },  // Adjust the field type accordingly
+                { sender: userDetail._id },  
                 { receiver: userDetail._id }
             ]
         }).sort({ updatedAt: -1 }).populate('message').populate('sender').populate('receiver').select('-password');

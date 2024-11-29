@@ -29,6 +29,17 @@ app.get('/test',(req,res)=>{
     })
 })
 
+app.use((err,req,res,next)=>{
+    if(err)
+    {
+        console.log(err);
+    }
+    else
+    {
+        next();
+    }
+})
+
 connectWithDatabase().then(()=>{
     server.listen(PORT , ()=>{
         console.log('server listened at port : ',PORT)
