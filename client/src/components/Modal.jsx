@@ -64,11 +64,20 @@ function Modal({isOpen,onCloseModal,data}) {
       e.preventDefault();
       toast.success('Updating ....')
       const URL = `${import.meta.env.VITE_BACKEND_URL}/api/update-user-details`
+      
       try
       {
-        const response = await axios.post(URL,profileData,{
+        const prepareNewProfileObject = {
+          firstname:profileData.firstname,
+          lastname:profileData.lastname,
+          profile_picture:profileData.profile_picture,
+          bio:profileData.bio,
+          gender:profileData.gender
+        }
+        const response = await axios.post(URL,prepareNewProfileObject,{
           withCredentials:true
         })
+        console.log("data",response.data);
         if(response?.data.success)
         {
           toast.success(response.data.message)
